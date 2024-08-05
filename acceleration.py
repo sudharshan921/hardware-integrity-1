@@ -1,23 +1,25 @@
 import serial
 import time
 
-ser = serial.Serial('/dev/ttyACM0', 9600)  
-time.sleep(2)  
+# Open serial connection to the Arduino
+ser = serial.Serial('/dev/ttyACM0', 9600)  # Adjust the port name as necessary
+time.sleep(2)  # Wait for the serial connection to initialize
 
 def read_throttle():
-    ser.write(b'r')  
-    time.sleep(0.1)  
+    ser.write(b'r')  # Send the 'r' command to read the throttle signal
+    time.sleep(0.1)  # Wait for the Arduino to respond
     if ser.in_waiting > 0:
         throttle_value = ser.readline().decode().strip()
         return int(throttle_value)
     return None
 
 def write_throttle(throttle_value):
-    ser.write(b'w')  
+    ser.write(b'w')  # Send the 'w' command to write the throttle signal
     ser.write(str(throttle_value).encode() + b'\n')
-    time.sleep(0.1)  
+    time.sleep(0.1)  # Wait for the Arduino to process the command
 
 def main():
+    # Record throttle signal
     recorded_throttle_values = []
     print("Recording throttle signal. Press Ctrl+C to stop.")
     try:
@@ -32,7 +34,7 @@ def main():
     
     print("Recording stopped.")
     
-    
+    # Use recorded throttle signal to control the car
     print("Replaying throttle signal. Press Ctrl+C to stop.")
     try:
         while True:
